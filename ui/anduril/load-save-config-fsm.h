@@ -88,8 +88,12 @@ typedef struct Config {
     #ifdef USE_BEACON_MODE
         uint8_t beacon_seconds;
     #endif
-        #ifdef USE_CANDLE_MODE
+    #ifdef USE_CANDLE_MODE
         candle_amplitude_e,
+        candle_wobble_style_e,
+        #ifdef USE_AUX_RGB_LEDS
+        candle_use_aux_e,
+        #endif
     #endif
 
     ///// voltage and temperature
