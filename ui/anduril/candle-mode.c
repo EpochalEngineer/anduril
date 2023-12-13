@@ -12,7 +12,7 @@
 #define CANDLE_AMPLITUDE_MAX 60
 #define CANDLE_AMPLITUDE_MIN 10
 
-#define MAX_CANDLE_LEVEL (RAMP_LENGTH-CANDLE_AMPLITUDE-15)
+#define MAX_CANDLE_LEVEL (MAX_LEVEL-CANDLE_AMPLITUDE-15)
 static uint8_t max_candle_level = MAX_CANDLE_LEVEL;
 // these should add up to 100
 static uint8_t candle_wave1_maxdepth = 30;
@@ -24,7 +24,7 @@ static uint8_t candle_wave2_depth;
 static uint8_t candle_wave3_depth;
 
 static inline void reset_parameters() {
-    max_candle_level = RAMP_LENGTH-candle_amplitude-15;
+    max_candle_level = MAX_LEVEL-candle_amplitude-15;
     switch (wobble_style) {
     case fireplace_slow_wobble_e:
         //use wave1/wave2 only
@@ -159,33 +159,33 @@ uint8_t candle_mode_state(Event event, uint16_t arg) {
         save_config();
         return EVENT_HANDLED;
     }
-    // 4C: making candle amplitude smaller (candle in sort of stillness)
-    else if (event == EV_4clicks) {
+    // 6C: making candle amplitude smaller (candle in sort of stillness)
+    else if (event == EV_6clicks) {
         candle_amplitude -= 3;
         if (candle_amplitude < CANDLE_AMPLITUDE_MIN)
             candle_amplitude = CANDLE_AMPLITUDE_MIN;
         reset_parameters();
         save_config();
         blip();
-        return MISCHIEF_MANAGED;
+        return EVENT_HANDLED;
     }
-    // 5C: making candle amplitude bigger (candle in the wind)
-    else if (event == EV_5clicks) {
+    // 7C: making candle amplitude bigger (candle in the wind)
+    else if (event == EV_7clicks) {
         candle_amplitude += 3;
         if (candle_amplitude > CANDLE_AMPLITUDE_MAX)
             candle_amplitude = CANDLE_AMPLITUDE_MAX;
         reset_parameters();
         save_config();
         blip();
-        return MISCHIEF_MANAGED;
+        return EVENT_HANDLED;
     }
-    // 6C: reset candle amplitude
-    else if (event == EV_6clicks) {
+    // 8C: reset candle amplitude
+    else if (event == EV_8clicks) {
         candle_amplitude = CANDLE_AMPLITUDE;
         reset_parameters();
         save_config();
         blip();
-        return MISCHIEF_MANAGED;
+        return EVENT_HANDLED;
     }
     // 7C: toggle candle mode using aux led
     #ifdef USE_AUX_RGB_LEDS

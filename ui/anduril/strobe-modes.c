@@ -42,7 +42,6 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         #ifdef USE_AUX_RGB_LEDS
         aux_led_reset = 1;
         #endif
-        PWM1_TOP = PWM_TOP;
         return EVENT_HANDLED;
     }
     // 2 clicks: rotate through strobe/flasher modes
