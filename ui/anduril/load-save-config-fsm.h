@@ -81,6 +81,8 @@ typedef struct Config {
     #endif
     #if defined(USE_PARTY_STROBE_MODE) || defined(USE_TACTICAL_STROBE_MODE)
         uint8_t strobe_delays[2];
+        uint8_t party_strobe_ontime;
+        uint8_t strobe_off_level;
     #endif
     #ifdef USE_BIKE_FLASHER_MODE
         uint8_t bike_flasher_brightness;
@@ -138,7 +140,6 @@ typedef struct Config {
     #ifdef USE_JUMP_START
         uint8_t jump_start_level;
     #endif
-
 } Config;
 
 // auto-detect how many eeprom bytes

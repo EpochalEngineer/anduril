@@ -205,6 +205,19 @@ uint8_t strobe_state(Event event, uint16_t arg) {
             blink_once();
         }
         #endif
+        #if defined(USE_PARTY_STROBE_MODE) || defined(USE_TACTICAL_STROBE_MODE)
+        #ifdef USE_TACTICAL_STROBE_MODE
+        else if (st <= tactical_strobe_e) {
+        #else
+        else if (st == party_strobe_e) {
+        #endif
+            if (cfg.party_strobe_ontime > 0)            
+                cfg.party_strobe_ontime -= 1;
+            save_config();
+            blink_once();
+        }
+        #endif
+
         return EVENT_HANDLED;
     }
     // 7C: turning up busy factor (busier) of lightning mode,
@@ -238,6 +251,18 @@ uint8_t strobe_state(Event event, uint16_t arg) {
             blink_once();
         }
         #endif
+        #if defined(USE_PARTY_STROBE_MODE) || defined(USE_TACTICAL_STROBE_MODE)
+        #ifdef USE_TACTICAL_STROBE_MODE
+        else if (st <= tactical_strobe_e) {
+        #else
+        else if (st == party_strobe_e) {
+        #endif
+            if (cfg.party_strobe_ontime < 100)            
+                cfg.party_strobe_ontime += 1;
+            save_config();
+            blink_once();
+        }
+        #endif
         return EVENT_HANDLED;
     }
     // 8C: reset lightning busy factor to default,
@@ -260,6 +285,17 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         #ifdef USE_LIGHTHOUSE_MODE
         else if (st == lighthouse_mode_e) {
             cfg.lighthouse_delay = DEFAULT_LIGHTHOUSE_DELAY;
+        }
+        #endif
+        #if defined(USE_PARTY_STROBE_MODE) || defined(USE_TACTICAL_STROBE_MODE)
+        #ifdef USE_TACTICAL_STROBE_MODE
+        else if (st <= tactical_strobe_e) {
+        #else
+        else if (st == party_strobe_e) {
+        #endif
+            cfg.strobe_off_level = (cfg.strobe_off_level == 0) ? 1 : 0;
+            save_config();
+            blink_once();
         }
         #endif
         return MISCHIEF_MANAGED;
@@ -333,16 +369,22 @@ inline void party_tactical_strobe_mode_iter(uint8_t st) {
     // one iteration of main loop()
     uint8_t del = cfg.strobe_delays[st];
     // TODO: make tac strobe brightness configurable?
-    set_level(STROBE_BRIGHTNESS);
+    uint8_t bright = memorized_level;
+    set_level(bright);
+    //set_level(STROBE_BRIGHTNESS);
+    
     if (0) {}  // placeholder
     #ifdef USE_PARTY_STROBE_MODE
     else if (st == party_strobe_e) {  // party strobe
-        #ifdef PARTY_STROBE_ONTIME
-        nice_delay_ms(PARTY_STROBE_ONTIME);
-        #else
-        if (del < 42) delay_zero();
-        else nice_delay_ms(1);
-        #endif
+        // #ifdef PARTY_STROBE_ONTIME
+        // nice_delay_ms(PARTY_STROBE_ONTIME);
+        // #else
+        if (cfg.party_strobe_ontime > 0)
+            nice_delay_ms(cfg.party_strobe_ontime);        
+        else {
+            if (del < 42) delay_zero();
+            else nice_delay_ms(1);
+        }
     }
     #endif
     #ifdef USE_TACTICAL_STROBE_MODE
@@ -350,7 +392,7 @@ inline void party_tactical_strobe_mode_iter(uint8_t st) {
         nice_delay_ms(del >> 1);
     }
     #endif
-    set_level(STROBE_OFF_LEVEL);
+    set_level(cfg.strobe_off_level);
     nice_delay_ms(del);  // no return check necessary on final delay
 }
 #endif

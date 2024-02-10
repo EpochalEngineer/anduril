@@ -116,6 +116,9 @@ Config cfg = {
         // party / tactical strobe timing
         // party strobe 24 Hz, tactical strobe 10 Hz
         .strobe_delays = { 41, 67 },
+        // defaults for sp10
+        .party_strobe_ontime = 0,
+        .strobe_off_level = 1,
     #endif
     #ifdef USE_BIKE_FLASHER_MODE
         .bike_flasher_brightness = DEFAULT_BIKING_LEVEL,
@@ -184,6 +187,6 @@ Config cfg = {
     #ifdef USE_JUMP_START
         .jump_start_level = DEFAULT_JUMP_START_LEVEL,
     #endif
-
+    
 };
 
